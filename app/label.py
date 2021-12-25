@@ -118,9 +118,6 @@ def create_app(test_config=None):
         data = request.json
         text, id = data['description'], data['id']
         title = data['title'] if ('title' in data.keys()) else ''
-        app.logger.info(id);
-        app.logger.info(text);
-        app.logger.info(title);
         model = pickle.load(open(f'models/{id}.pk','rb'))
         title = title*model['meta']['title_imp']
         distances, indices = predict_top_tags(model, text)
