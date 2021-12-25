@@ -3,11 +3,12 @@ version: '3.9'
 
 services:
   flask:
-    build: .
+    build: app
     ports: 
       - "5001:5001"
     volumes:
-      - .:/home
+      - ./app:/home
+      - ./data:/home/data
     environment:
       FLASK_APP: label
       FLASK_ENV: development
@@ -15,19 +16,18 @@ services:
       FLASK_RUN_PORT: 5001
 
   jupyter:
-    build: .
+    build: app
     volumes: 
-      - .:/home
+      - ./:/home
     ports: 
       - "5002:8888"
     command: jupyter notebook --allow-root --ip 0.0.0.0 --port 8888 --NotebookApp.token='' --NotebookApp.password=''
 
   db:
-    image: postgres
+    build: postgres
     restart: always
     volumes: 
-      - .:/data
-      - ./init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
+      - ./data/:/data
     environment:
       POSTGRES_PASSWORD: example
 
