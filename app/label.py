@@ -2,6 +2,8 @@
 import json
 import sys
 
+from pathlib import Path
+
 from flask import Response
 from flask import Flask
 from flask import render_template
@@ -25,6 +27,9 @@ def create_app(test_config=None):
     
     # model name to function map 
     modelname2func = {'tfidf_knn': train_tfidf_knn}
+    Path("models/").mkdir(parents=True, exist_ok=True)
+    Path("data/vacancies").mkdir(parents=True, exist_ok=True)
+    Path("data/esco").mkdir(parents=True, exist_ok=True)
     
     # check if vacancies are already merged     
     vacancies_path = 'data/vacancies/all.csv'
@@ -32,11 +37,12 @@ def create_app(test_config=None):
         vacancies = pd.read_csv(vacancies_path)
     else:
         vacancies = load_vacancies('data/binary/*.csv')
-        vacances = vacancies[~vacancies.isna()]
+        vacancies = vacancies[~vacancies.isna()]
         vacancies.to_csv(vacancies_path)
+    
+    if ~os.path.isfile('data/vacancies/all.csv'):
+        load_esco_DB()
     occupations = pd.read_csv('data/esco/occupations.csv')
-
-    np.random.seed(10) 
 
     
     @app.route('/esco')
