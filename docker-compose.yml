@@ -7,7 +7,7 @@ services:
     ports: 
       - "5001:5001"
     volumes:
-      - :/home
+      - .:/home
     environment:
       FLASK_APP: label
       FLASK_ENV: development
