@@ -1,0 +1,4 @@
+
+{"id": "4f41763c-65af-11ec-a36f-0242ac160002", "model_name": "tfidf_knn", "lang": "en", "ngram_min": 1, "ngram_max": 4, "n_neighbors": 5, "title_imp": 10, "alt_title_imp": 10, "case_insensitive": true}
+{"id": "5202535c-65b2-11ec-a097-0242ac160002", "model_name": "tfidf_knn", "lang": "fr", "ngram_min": 1, "ngram_max": 4, "n_neighbors": 5, "title_imp": 10, "alt_title_imp": 10, "case_insensitive": true}
+{"id": "56327970-65b2-11ec-bd23-0242ac160002", "model_name": "tfidf_knn", "lang": "de", "ngram_min": 1, "ngram_max": 4, "n_neighbors": 5, "title_imp": 10, "alt_title_imp": 10, "case_insensitive": true}
