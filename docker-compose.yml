@@ -1,0 +1,32 @@
+# Use postgres/example user/password credentials
+version: '3.9'
+
+services:
+  flask:
+    build: .
+    ports: 
+      - "5001:5001"
+    volumes:
+      - .:/home
+    environment:
+      FLASK_APP: label
+      FLASK_ENV: development
+      FLASK_RUN_HOST: 0.0.0.0
+      FLASK_RUN_PORT: 5001
+
+  jupyter:
+    build: .
+    vlumes: 
+      - .:/home
+    ports: 
+      - "5002:8888"
+    command: jupyter notebook --allow-root --ip 0.0.0.0 --port 8888 --NotebookApp.token='' --NotebookApp.password=''
+
+  db:
+    image: postgres
+    restart: always
+    volumes: 
+      - ./data:/data
+      - ./init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
+    environment:
+      POSTGRES_PASSWORD: example
