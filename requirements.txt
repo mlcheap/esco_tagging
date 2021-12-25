@@ -1,8 +1,0 @@
-psycopg2
-pandas
-sklearn
-numpy
-tqdm 
-matplotlib
-Flask
-jupyterlab
