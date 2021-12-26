@@ -1,164 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>ESCO Tagging</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</head>
-<body style="width: 100vw">
-<nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="javascript:void(0)">ML cheap</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="mynavbar">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="javascript:sample()">Sample vacancy</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" data-bs-toggle="collapse" href="#models">Select model</a>
-        </li>
-      </ul>
-      <form class="d-flex" style="width:40%">
-        <input class="form-control me-2" oninput="top_tags(this.value)" type="text" placeholder="Search tags ...">
-      </form>
-    </div>
-  </div>
-</nav>
-    <br><br>
-<div class="collapse m-4" id="models"></div>
-<div class="row container m-4" style="hight:100vw" >
-    <div class="container col-sm-8 container">
-        <strong id="job-title"></strong>
-        <p id="job-description"></p>
-        <br>
-    </div>
-    <div class="container col-sm-4 ">
-        <div id="tags"></div>
-    </div>
-</div>
+    <head>
+        <title>ESCO Tagging</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    </head>
+    <body style="width: 100vw">
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="javascript:void(0)">ML cheap</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mynavbar">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:sample()">Sample vacancy</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="collapse" href="#models">Select model</a>
+                        </li>
+                    </ul>
+                    <form class="d-flex" style="width:40%">
+                        <input class="form-control me-2" oninput="top_tags(this.value)" type="text" placeholder="Search tags ...">
+                    </form>
+                </div>
+            </div>
+        </nav>
+        <br><br>
+        <div class="collapse m-4" id="models"></div>
+        <div class="row container m-4" style="hight:100vw" >
+            <div class="container col-sm-8 container">
+                <strong id="job-title"></strong>
+                <p id="job-description"></p>
+                <br>
+            </div>
+            <div class="container col-sm-4 ">
+                <div id="tags"></div>
+            </div>
+        </div>
 
 
-<script>
-localStorage.country = "GB";
-localStorage.lang = "en";
-localStorage.id = "f52073d4-6562-11ec-bdcd-0242ac150002";
-function load_tags() {
-    const xhttp = new XMLHttpRequest();
-    xhttp.onload = function() {
-        localStorage.all_tags = this.responseText;
-        top_tags('');
-        sample();
-    }
-    xhttp.open("GET", `/all-tags?lang=${localStorage.lang}`);
-    xhttp.send();
-}
-function render_table(models, el, ex) {
-    names = [];
-    models["schema"]["fields"].forEach((field)=>  names.push(field["name"]) );
-    var thead = document.createElement("thead");
-    var tr = document.createElement("tr");
-    names.filter(name=> !ex.includes(name)).forEach((name)=> {
-        let th = document.createElement("th"); 
-        th.innerHTML = name; 
-        tr.appendChild(th);
-    });
-    thead.appendChild(tr);
-    let tbody = document.createElement("tbody");
-    models["data"].forEach((model)=>{
-        let tr = document.createElement("tr");
-        names.filter(name=> !ex.includes(name)).forEach((name) => {
-            let td = document.createElement("td");
-            td.innerHTML = model[name];
-            tr.appendChild(td); 
-            tr.onclick = () => {
-                document.querySelectorAll('.table-active').forEach( (e)=> e.classList.remove("table-active") );
-                tr.classList.add("table-active");
-                if (model.id != localStorage.id) {
-                    localStorage.id = model.id;
-                    localStorage.lang = model.lang;
-                    localStorage.country = ( (model.lang=='en') ? "GB" : model.lang.toUpperCase() );
-                    load_tags();
+        <script>
+            "use strict";
+            localStorage.country = "GB";
+            localStorage.lang = "en";
+            localStorage.id = "4f41763c-65af-11ec-a36f-0242ac160002";
+            function load_tags() {
+                const xhttp = new XMLHttpRequest();
+                xhttp.onload = function() {
+                    localStorage.all_tags = this.responseText;
+                    top_tags('');
+                    sample();
                 }
+                xhttp.open("GET", `/all-tags?lang=${localStorage.lang}`);
+                xhttp.send();
             }
-        });
-        tbody.appendChild(tr);
-    });
-    var table = document.createElement("table");
-    table.classList.add("table");
-    table.classList.add("table-responsive");
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    el.replaceChildren(table);
-}
-function load_models() {
-    const xhttp = new XMLHttpRequest();
-    xhttp.onload = function() {
-        models = JSON.parse(this.responseText);
-        div_element = document.getElementById("models")
-        render_table(models, div_element, ["id"]); // "model_name","case_insensitive","id","ngram_min","title_alt_imp"]);
-    }
-    xhttp.open("GET", "/all-models");
-    xhttp.send();
-}
-function sample() {
-    const xhttp = new XMLHttpRequest();
-    xhttp.onload = function() {
-        response = JSON.parse(this.responseText);
-        document.getElementById("job-title").innerHTML = response['job_title'];
-        document.getElementById("job-description").innerHTML = response['job_description'];
-        top_tags('');
-    }
-    xhttp.open("GET", `/sample-vacancy?country=${localStorage.country}`);
-    xhttp.send();
-}
-function top_tags(text) {
-    all_tags = JSON.parse(localStorage.all_tags);
-    const xhttp = new XMLHttpRequest();
-    xhttp.onload = function() {
-        response = JSON.parse(this.responseText);
-        document.getElementById("tags").replaceChildren();        
-        response.slice(0,10).forEach((top_occ)=>{
-            occupation_id = all_tags.data.map((occ)=>occ.occupation_id);
-            occ = all_tags.data[occupation_id.indexOf(top_occ.index)]
-            var tag = document.createElement("button"); 
-            tag.classList.add("btn");
-            tag.classList.add("m-1");
-            tag.classList.add("rounded-pill");
-            tag.classList.add("btn-secondary");
-            tag.setAttribute("data-bs-toggle","tooltip");
-            tag.setAttribute("title",occ.description);
-            tag.innerText = occ.title;
-            document.getElementById("tags").appendChild(tag);
-        });
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-          return new bootstrap.Tooltip(tooltipTriggerEl);
-        })
-    }
-    xhttp.open("POST", "/top-tags");
-    xhttp.setRequestHeader("Content-Type", "application/json")
-    if (text==null || text.trim().length==0) 
-    {
-        request = {
-                   id: localStorage.id.toString(), 
-                    title: document.getElementById("job-title").innerHTML, 
-                    description: document.getElementById("job-description").innerHTML 
+            function render_table(models, el, ex) {
+                let names = [];
+                models["schema"]["fields"].forEach((field)=>  names.push(field["name"]) );
+                let thead = document.createElement("thead");
+                let tr = document.createElement("tr");
+                names.filter(name=> !ex.includes(name)).forEach((name)=> {
+                    let th = document.createElement("th"); 
+                    th.innerHTML = name; 
+                    tr.appendChild(th);
+                });
+                thead.appendChild(tr);
+                let tbody = document.createElement("tbody");
+                models["data"].forEach((model)=>{
+                    let tr = document.createElement("tr");
+                    names.filter(name=> !ex.includes(name)).forEach((name) => {
+                        let td = document.createElement("td");
+                        td.innerHTML = model[name];
+                        tr.appendChild(td); 
+                        tr.onclick = () => {
+                            document.querySelectorAll('.table-active').forEach( (e)=> e.classList.remove("table-active") );
+                            tr.classList.add("table-active");
+                            if (model.id != localStorage.id) {
+                                localStorage.id = model.id;
+                                localStorage.lang = model.lang;
+                                localStorage.country = ( (model.lang=='en') ? "GB" : model.lang.toUpperCase() );
+                                load_tags();
+                            }
+                        }
+                    });
+                    tbody.appendChild(tr);
+                });
+                let table = document.createElement("table");
+                table.classList.add("table");
+                table.classList.add("table-responsive");
+                table.appendChild(thead);
+                table.appendChild(tbody);
+                el.replaceChildren(table);
+            }
+            function load_models() {
+                const xhttp = new XMLHttpRequest();
+                xhttp.onload = function() {
+                    let models = JSON.parse(this.responseText);
+                    let div_element = document.getElementById("models")
+                    render_table(models, div_element, ["id"]); // "model_name","case_insensitive","id","ngram_min","title_alt_imp"]);
                 }
-    } else {
-        request = {id: localStorage.id.toString(), description: text}
-    }
+                xhttp.open("GET", "/all-models");
+                xhttp.send();
+            }
+            function sample() {
+                const xhttp = new XMLHttpRequest();
+                xhttp.onload = function() {
+                    let response = JSON.parse(this.responseText);
+                    document.getElementById("job-title").innerHTML = response['job_title'];
+                    document.getElementById("job-description").innerHTML = response['job_description'];
+                    top_tags('');
+                }
+                xhttp.open("GET", `/sample-vacancy?country=${localStorage.country}`);
+                xhttp.send();
+            }
+            function top_tags(text) {
+                var all_tags = JSON.parse(localStorage.all_tags);
+                const xhttp = new XMLHttpRequest();
+                xhttp.onload = function() {
+                    let response = JSON.parse(this.responseText);
+                    document.getElementById("tags").replaceChildren();        
+                    response.slice(0,10).forEach((top_occ)=>{
+                        let occupation_id = all_tags.data.map((occ)=>occ.occupation_id);
+                        let occ = all_tags.data[occupation_id.indexOf(top_occ.index)]
+                        let tag = document.createElement("button"); 
+                        tag.classList.add("btn");
+                        tag.classList.add("m-1");
+                        tag.classList.add("rounded-pill");
+                        tag.classList.add("btn-secondary");
+                        tag.setAttribute("data-bs-toggle","tooltip");
+                        tag.setAttribute("title",occ.description);
+                        tag.innerText = occ.title;
+                        document.getElementById("tags").appendChild(tag);
+                    });
+                    let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                        return new bootstrap.Tooltip(tooltipTriggerEl);
+                    })
+                    }
+                xhttp.open("POST", "/top-tags");
+                xhttp.setRequestHeader("Content-Type", "application/json")
+                if (text==null || text.trim().length==0) 
+                {
+                    var request = {
+                        id: localStorage.id.toString(), 
+                        title: document.getElementById("job-title").innerHTML, 
+                        description: document.getElementById("job-description").innerHTML 
+                    }
+                } else {
+                    var request = {id: localStorage.id.toString(), description: text}
+                }
 
-    xhttp.send(JSON.stringify(request));
-}
-load_models();
-load_tags();
-sample();
-</script>
-</body>
+                xhttp.send(JSON.stringify(request));
+            }
+            load_models();
+            load_tags();
+            sample();
+        </script>
+    </body>
 </html>

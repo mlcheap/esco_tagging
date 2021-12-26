@@ -21,7 +21,7 @@ services:
       - ./:/home
     ports: 
       - "5002:8888"
-    command: jupyter notebook --allow-root --ip 0.0.0.0 --port 8888 --NotebookApp.token='' --NotebookApp.password=''
+    command: jupyter lab --allow-root --ip 0.0.0.0 --port 8888 --NotebookApp.token='' --NotebookApp.password=''
 
   db:
     build: postgres
