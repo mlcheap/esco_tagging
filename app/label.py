@@ -50,7 +50,12 @@ def create_app(test_config=None):
         if 'username' in session:
             return f'Logged in as {session["username"]}'
         return 'You are not logged in'
-        
+    
+    
+    @app.route('/js/<name>', methods=['GET', 'POST'])
+    def templates(name):
+        with open(f'js/{name}','r') as f:
+            return f.read()
 
     @app.route('/review',methods=['GET'])
     def view():
