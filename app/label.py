@@ -45,13 +45,6 @@ def create_app(test_config=None):
     occupations = pd.read_csv('data/esco/occupations.csv')
 
     
-    @app.route('/esco')
-    def index():
-        if 'username' in session:
-            return f'Logged in as {session["username"]}'
-        return 'You are not logged in'
-    
-    
     @app.route('/js/<name>', methods=['GET', 'POST'])
     def templates(name):
         with open(f'js/{name}','r') as f:
@@ -99,34 +92,52 @@ def create_app(test_config=None):
         
     @app.route('/all-models', methods=['GET'])
     def get_all_models():
-        df = pd.read_json('models/log.jl',lines=True)
-        return Response(df.set_index('id').to_json(orient="table"), mimetype='application/json')
+        try:
+            df = pd.read_json('models/log.jl',lines=True)
+            return Response(df.set_index('id').to_json(orient="table"), mimetype='application/json')
+        except Exception as err:
+            return f"Error {type(err)}\nMessage: {err}"
     
     
     @app.route('/train', methods=['POST'])
     def train_model():
-        id = str(uuid.uuid1())
-        response = dict(id=id)
-        data = request.get_json()
-        train_func = modelname2func[data['model_name']]
-        model, params = train_func(**data)
-        response.update(params)
-        with open(f'models/{id}.pk','wb') as f:
-            pickle.dump(model, f)
-        with open('models/log.jl', 'a') as f:
-            f.write('\n'+json.dumps(response))   
-        return Response(json.dumps(response), mimetype='application/json')
+        try:
+            id = str(uuid.uuid1())
+            response = dict(id=id)
+            data = request.get_json()
+            train_func = modelname2func[data['model_name']]
+            model, params = train_func(**data)
+            response.update(params)
+            with open(f'models/{id}.pk','wb') as f:
+                pickle.dump(model, f)
+            with open('models/log.jl', 'a') as f:
+                f.write('\n'+json.dumps(response))   
+            return Response(json.dumps(response), mimetype='application/json')
+        except KeyError as err:
+            return f"valid 'model_name' not provided: {err}" 
+        except OSError as err:
+            return f"OS error, could not open files for model dump: {err}"
+        except Exception as err:
+            return f"Error {type(err)}\nMessage: {err}"
+        
     
     
     @app.route('/top-tags', methods=['POST'])
     def predict():
-        data = request.json
-        text, id = data['description'], data['id']
-        title = data['title'] if ('title' in data.keys()) else ''
-        model = pickle.load(open(f'models/{id}.pk','rb'))
-        title = title*model['meta']['title_imp']
-        distances, indices = predict_top_tags(model, text)
-        response = [{'index': i, 'distance': d} for i,d in zip(indices,distances)] 
-        return Response(json.dumps(response), mimetype='application/json')
+        try:
+            data = request.json
+            text, id = data['description'], data['id']
+            title = data['title'] if ('title' in data.keys()) else ''
+            model = pickle.load(open(f'models/{id}.pk','rb'))
+            title = title*model['meta']['title_imp']
+            distances, indices = predict_top_tags(model, text)
+            response = [{'index': i, 'distance': d} for i,d in zip(indices,distances)] 
+            return Response(json.dumps(response), mimetype='application/json')
+        except KeyError as err:
+            return f"required field not provided: {err}" 
+        except FileNotFoundError as err:
+            return f"model id not found" 
+        except Exception as err:
+            return f"Error {type(err)}\nMessage: {err}"
 
     return app
