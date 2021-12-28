@@ -129,8 +129,8 @@ def create_app(test_config=None):
             text, id = data['description'], data['id']
             title = data['title'] if ('title' in data.keys()) else ''
             model = pickle.load(open(f'models/{id}.pk','rb'))
-            title = title*model['meta']['title_imp']
-            distances, indices = predict_top_tags(model, text)
+            title = (title + ' ')*model['meta']['title_imp']
+            distances, indices = predict_top_tags(model, title + '\n' + text)
             response = [{'index': i, 'distance': d} for i,d in zip(indices,distances)] 
             return Response(json.dumps(response), mimetype='application/json')
         except KeyError as err:
