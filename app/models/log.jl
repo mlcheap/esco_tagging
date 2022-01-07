@@ -1,4 +1,3 @@
-
-{"id": "4f41763c-65af-11ec-a36f-0242ac160002", "model_name": "tfidf_knn", "lang": "en", "ngram_min": 1, "ngram_max": 4, "n_neighbors": 5, "title_imp": 10, "alt_title_imp": 10, "case_insensitive": true}
-{"id": "5202535c-65b2-11ec-a097-0242ac160002", "model_name": "tfidf_knn", "lang": "fr", "ngram_min": 1, "ngram_max": 4, "n_neighbors": 5, "title_imp": 10, "alt_title_imp": 10, "case_insensitive": true}
-{"id": "56327970-65b2-11ec-bd23-0242ac160002", "model_name": "tfidf_knn", "lang": "de", "ngram_min": 1, "ngram_max": 4, "n_neighbors": 5, "title_imp": 10, "alt_title_imp": 10, "case_insensitive": true}
+{"id": "4da4d7cc-6eb7-11ec-ba05-0242ac170002", "model_name": "tfidf_knn", "lang": "de", "ngram_min": 1, "ngram_max": 4, "n_neighbors": 50, "title_imp": 10, "alt_title_imp": 10, "case_insensitive": true}
+{"id": "52f7e55c-6eb7-11ec-bffb-0242ac170002", "model_name": "tfidf_knn", "lang": "en", "ngram_min": 1, "ngram_max": 4, "n_neighbors": 50, "title_imp": 10, "alt_title_imp": 10, "case_insensitive": true}
+{"id": "578da020-6eb7-11ec-8bc4-0242ac170002", "model_name": "tfidf_knn", "lang": "fr", "ngram_min": 1, "ngram_max": 4, "n_neighbors": 50, "title_imp": 10, "alt_title_imp": 10, "case_insensitive": true}
